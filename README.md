@@ -11,7 +11,3 @@ In this repo i will upload all lab file in course work CSCN1202
 ---
 
 Every Tuesday Lab work
-
-### Git command
-
----
