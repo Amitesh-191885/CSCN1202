@@ -41,6 +41,10 @@ public:
         vector<vector<int>> dist(V, vector<int>(V, INT_MAX));
         for (int i = 1; i < V; i++)
         {
+            dist[i][i] = 0;
+        }
+        for (int i = 1; i < V; i++)
+        {
             for (auto it : adj[i])
             {
                 dist[i][it.first] = it.second;
