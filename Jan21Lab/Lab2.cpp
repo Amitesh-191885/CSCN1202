@@ -4,11 +4,17 @@ using namespace std;
 2. Write a program to find the shortest paths between every pair of vertices in a graph
     using Floyd-Warshall's algorithm.
 */
+struct Node
+{
+    int v;
+    int w;
+    Node *next;
+};
 class Graph
 {
 private:
     int V;
-    vector<vector<pair<int, int>>> adj;
+    vector<Node *> adj;
 
 public:
     Graph(int vertices)
@@ -19,8 +25,15 @@ public:
 
     void addEdge(int src, int dest, int weight)
     {
-        adj[src].push_back({dest, weight});
-        adj[dest].push_back({src, weight});
+        Node *tempSrcHead = adj[src];
+        Node *newSrcNode = new Node{dest, weight};
+        newSrcNode->next = tempSrcHead;
+        adj[src] = newSrcNode;
+
+        Node *tempDestHead = adj[dest];
+        Node *newDestNode = new Node{src, weight};
+        newDestNode->next = tempDestHead;
+        adj[dest] = newDestNode;
     }
 
     void display()
@@ -28,9 +41,11 @@ public:
         for (int i = 1; i < V; i++)
         {
             cout << "Vertex " << i << " :";
-            for (auto it : adj[i])
+            Node *tempNode = adj[i];
+            while (tempNode)
             {
-                cout << "{ " << it.first << "," << it.second << "}, ";
+                cout << "{ " << tempNode->v << "," << tempNode->w << "}, ";
+                tempNode = tempNode->next;
             }
             cout << endl;
         }
@@ -45,18 +60,36 @@ public:
         }
         for (int i = 1; i < V; i++)
         {
-            for (auto it : adj[i])
+            Node *temp = adj[i];
+            while (temp)
             {
-                dist[i][it.first] = it.second;
+                dist[i][temp->v] = min(dist[i][temp->v], temp->w);
+                temp = temp->next;
             }
         }
 
         cout << "Before Floyed distances: \n";
+        cout << "   ";
         for (int i = 1; i < V; i++)
         {
+            cout << i << " , ";
+        }
+        cout << "\n";
+
+        for (int i = 1; i < V; i++)
+        {
+            cout << i << ": ";
             for (int j = 1; j < V; j++)
             {
-                cout << dist[i][j] << " , ";
+                if (dist[i][j] == INT_MAX)
+                {
+                    cout << "INF , ";
+                }
+                else
+                {
+
+                    cout << dist[i][j] << " , ";
+                }
             }
             cout << endl;
         }
@@ -77,9 +110,16 @@ public:
         }
 
         cout << "\n\n After Floyed distances: \n";
+        cout << "   ";
+        for (int i = 1; i < V; i++)
+        {
+            cout << i << " , ";
+        }
+        cout << "\n";
 
         for (int i = 1; i < V; i++)
         {
+            cout << i << ": ";
             for (int j = 1; j < V; j++)
             {
                 cout << dist[i][j] << " , ";

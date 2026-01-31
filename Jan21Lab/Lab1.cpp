@@ -4,23 +4,36 @@ using namespace std;
 1. Write a program to find the shortest path between
     two vertices in a graph using Dijkstra's algorithm.
 */
+struct Node
+{
+    int v;
+    int w;
+    Node *next;
+};
 class Graph
 {
 private:
     int V;
-    vector<vector<pair<int, int>>> adj;
+    vector<Node *> adj;
 
 public:
     Graph(int vertex)
     {
         V = vertex;
-        adj.resize(V + 1);
+        adj.resize(V + 1, nullptr);
     }
 
     void addEdge(int src, int dest, int weight)
     {
-        adj[src].push_back({dest, weight});
-        adj[dest].push_back({src, weight});
+        Node *tempSrcHead = adj[src];
+        Node *newSrcNode = new Node{dest, weight};
+        newSrcNode->next = tempSrcHead;
+        adj[src] = newSrcNode;
+
+        Node *tempDestHead = adj[dest];
+        Node *newDestNode = new Node{src, weight};
+        newDestNode->next = tempDestHead;
+        adj[dest] = newDestNode;
     }
 
     void display()
@@ -28,9 +41,11 @@ public:
         for (int i = 1; i < V; i++)
         {
             cout << "Vertex " << i << " :";
-            for (auto it : adj[i])
+            Node *tempNode = adj[i];
+            while (tempNode)
             {
-                cout << "{ " << it.first << "," << it.second << "}, ";
+                cout << "{ " << tempNode->v << "," << tempNode->w << "}, ";
+                tempNode = tempNode->next;
             }
             cout << endl;
         }
@@ -56,10 +71,12 @@ public:
                 continue;
             }
 
-            for (auto &neighbour : adj[pqTopVertex])
+            Node *temp = adj[pqTopVertex];
+
+            while (temp)
             {
-                int vertex = neighbour.first;
-                int weight = neighbour.second;
+                int vertex = temp->v;
+                int weight = temp->w;
 
                 if (dist[pqTopVertex] != INT_MAX)
                 {
@@ -69,6 +86,7 @@ public:
                         pq.emplace(dist[vertex], vertex);
                     }
                 }
+                temp = temp->next;
             }
 
             if (pqTopVertex == dest)
@@ -99,7 +117,7 @@ int main()
     g.addEdge(4, 5, 10);
     g.display();
 
-    g.DijkstrasAlgo(1, 5);
+    g.DijkstrasAlgo(1, 3);
 
     return 0;
 }
