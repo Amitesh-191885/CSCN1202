@@ -49,12 +49,11 @@ public:
     {
         for (int i = 0; i < V; i++)
         {
-
             dist[i] = INT_MAX;
         }
         dist[src] = 0;
 
-        for (int i = 1; i <= V - 1; i++)
+        for (int i = 1; i < V; i++)
         {
             for (int j = 0; j < E; j++)
             {
@@ -62,7 +61,9 @@ public:
                 int v = edges[j].v;
                 int w = edges[j].w;
                 if (dist[u] != INT_MAX && dist[u] + w < dist[v])
-                    dist[v] = dist[u] + w;
+                {
+                    cout << "The graph contains negative cycles \n";
+                }
             }
         }
 
@@ -73,8 +74,7 @@ public:
             int w = edges[j].w;
             if (dist[u] != INT_MAX && dist[u] + w < dist[v])
             {
-                cout << "Graph contains negative weight cycle" << endl;
-                return;
+                dist[v] = dist[u] + w;
             }
         }
 
@@ -95,31 +95,47 @@ public:
 
 int main()
 {
-    int v, e;
-    cout << "Enter total vertices and edges: ";
-    cin >> v >> e;
+    // int v, e;
+    // cout << "Enter total vertices and edges: ";
+    // cin >> v >> e;
 
-    Graph g(v, e);
-    int src, dest, weight;
-    cout << "Now, Enter space separated src, dest, weight of each edges: " << endl;
-    for (int i = 0; i < e; i++)
-    {
-        cin >> src >> dest >> weight;
-        g.addEdge(i, src, dest, weight);
-    }
+    // Graph g(v, e);
+    // int src, dest, weight;
+    // cout << "Now, Enter space separated src, dest, weight of each edges: " << endl;
+    // for (int i = 0; i < e; i++)
+    // {
+    //     cin >> src >> dest >> weight;
+    //     g.addEdge(i, src, dest, weight);
+    // }
+
+    // g.displayGraph();
+
+    // int t;
+    // cout << "Enter total no of test case: ";
+    // cin >> t;
+
+    // while (t--)
+    // {
+    //     cout << "Enter src: ";
+    //     cin >> src;
+    //     g.BellmanFord(src);
+    // }
+
+    Graph g(5, 9);
+
+    g.addEdge(0, 3, 0, 4);
+    g.addEdge(1, 3, 2, 7);
+    g.addEdge(2, 3, 4, 3);
+    g.addEdge(3, 0, 2, 4);
+    g.addEdge(4, 2, 0, -3);
+    g.addEdge(5, 0, 4, 5);
+    g.addEdge(6, 4, 2, 3);
+    g.addEdge(7, 1, 2, -4);
+    g.addEdge(8, 4, 1, 2);
 
     g.displayGraph();
 
-    int t;
-    cout << "Enter total no of test case: ";
-    cin >> t;
-
-    while (t--)
-    {
-        cout << "Enter src: ";
-        cin >> src;
-        g.BellmanFord(src);
-    }
+    g.BellmanFord(0);
 
     return 0;
 }
