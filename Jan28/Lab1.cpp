@@ -1,48 +1,74 @@
-#include <bits/stdc++.h>
-using namespace std;
 /*
-Lab 3. Formulate and implement Dijkstra's algorithm to compute the
-    shortest path between two vertices in a 
+Lab 3. Formulate and implement Dijkstra’s algorithm to compute
+    the shortest path between two vertices in a weighted graph
+    with non-negative edge weights. Provide a time complexity
+    analysis of the implementation.
 */
 #include <bits/stdc++.h>
 using namespace std;
 
-struct Node {
+struct Node
+{
     int vertex;
     int weight;
-    Node* next;
+    Node *next;
 };
 
-class Graph {
+class Graph
+{
 private:
     int V;
-    vector<Node*> adj;   // adjacency list using linked lists
+    vector<Node *> adj; // adjacency list using linked lists
 
 public:
-    Graph(int v) {
+    Graph(int v)
+    {
         V = v;
-        adj.resize(V + 1, nullptr);   // 1-based indexing
+        adj.resize(V + 1, nullptr); // 1-based indexing
     }
 
     // Undirected weighted edge
-    void addEdge(int src, int dest, int weight) {
-        Node* newNode = new Node{dest, weight, adj[src]};
-        adj[src] = newNode;
+    void addEdge(int src, int dest, int weight)
+    {
+        Node *tempSrcHead = adj[src];
+        Node *newSrcNode = new Node{dest, weight};
+        newSrcNode->next = tempSrcHead;
+        adj[src] = newSrcNode;
 
-        newNode = new Node{src, weight, adj[dest]};
-        adj[dest] = newNode;
+        Node *tempDestHead = adj[dest];
+        Node *newDestNode = new Node{src, weight};
+        newDestNode->next = tempDestHead;
+        adj[dest] = newDestNode;
     }
 
-        void dijkstra(int src) {
+    void display()
+    {
+        for (int i = 1; i <= V; i++)
+        {
+            cout << "Vertex " << i << " :";
+            Node *tempNode = adj[i];
+            while (tempNode)
+            {
+                cout << "{ " << tempNode->vertex << "," << tempNode->weight << "}, ";
+                tempNode = tempNode->next;
+            }
+            cout << endl;
+        }
+    }
+
+    void dijkstra(int src)
+    {
         vector<int> dist(V + 1, INT_MAX);
-        priority_queue<pair<int,int>,
-            vector<pair<int,int>>,
-            greater<pair<int,int>>> pq;
+        priority_queue<pair<int, int>,
+                       vector<pair<int, int>>,
+                       greater<pair<int, int>>>
+            pq;
 
         dist[src] = 0;
         pq.push({0, src});
 
-        while (!pq.empty()) {
+        while (!pq.empty())
+        {
             auto topVal = pq.top();
             pq.pop();
 
@@ -52,12 +78,14 @@ public:
             if (currDist > dist[u])
                 continue;
 
-            Node* temp = adj[u];
-            while (temp) {
+            Node *temp = adj[u];
+            while (temp)
+            {
                 int v = temp->vertex;
                 int wt = temp->weight;
 
-                if (dist[u] + wt < dist[v]) {
+                if (dist[u] + wt < dist[v])
+                {
                     dist[v] = dist[u] + wt;
                     pq.push({dist[v], v});
                 }
@@ -67,7 +95,8 @@ public:
 
         // Print distances
         cout << "Shortest distances from source " << src << ":\n";
-        for (int i = 1; i <= V; i++) {
+        for (int i = 1; i <= V; i++)
+        {
             if (dist[i] == INT_MAX)
                 cout << i << " : INF\n";
             else
@@ -76,8 +105,8 @@ public:
     }
 };
 
-
-int main() {
+int main()
+{
     Graph g(5);
 
     g.addEdge(1, 2, 4);
@@ -86,9 +115,10 @@ int main() {
     g.addEdge(2, 5, 6);
     g.addEdge(3, 4, 2);
     g.addEdge(4, 5, 10);
+    g.display();
+    cout << "\n\n";
 
     g.dijkstra(1);
 
     return 0;
 }
-
